@@ -1,4 +1,3 @@
-# %%
 import os
 import pandas as pd
 from tqdm import tqdm
@@ -10,26 +9,22 @@ for (dirpath, dirnames, filenames) in os.walk("data"):
 
 EXCLUDE = ["EDIANAGRAFESTA20181920180901.csv"]
 
-f
 
-# %%
 for e in EXCLUDE:
     f.remove(e)
 
-f
 
-# %%
 df = pd.read_csv("data/{}".format(EXCLUDE[0]))
-df
+SORTER = ["CODICEEDIFICIO", "CODICESCUOLA", "ANNOSCOLASTICO"]
+df = df.sort_values(by=SORTER)
 
-# %%
+
 for file in tqdm(f):
     if file.endswith(".csv"):
         print(file)
         t_df = pd.read_csv("data/{}".format(file))
-        df = pd.merge(df, t_df, on="CODICESCUOLA")
-        del t_df
-        print(df.memory_usage)
+        t_df = t_df.sort_values(by=SORTER)
+        df = pd.merge(df, t_df, on=SORTER, how="left")
+        print(df.shape, df.memory_usage().sum() / 1024 ** 2, sep="\t")
 
-# %%
-df
+df.to_excel("SNAES-1819.xlsx")
